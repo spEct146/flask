@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" />
+	<title>WebSDK Demo</title>
+	<style>
+		html,
+		body {
+			height: 100%;
+			max-height: 100%;
+			margin: 0;
+			padding: 0;
+			vertical-align: top;
+			font-family: "Helvetica Neue", helvetica, "Liberation Sans", arial, sans-serif;
+			box-sizing: border-box;
+		}
+
+		input,
+		textarea {
+			border: 1px solid #839aae;
+			height: 32px;
+			padding: 8px;
+			font-size: 16px;
+			vertical-align: top;
+			margin: 0;
+			width: 160px;
+		}
+
+		input:active,
+		textarea:active {
+			border: 1px solid #4c8bf7;
+		}
+
+		input[type="number"] {
+			-moz-appearance: textfield;
+			-webkit-appearance: textfield;
+			appearance: textfield;
+		}
+
+		input[type="number"]::-webkit-outer-spin-button,
+		input[type="number"]::-webkit-inner-spin-button {
+			display: none;
+		}
+
+		input.error {
+			border-color: red;
+		}
+
+		#phone {
+			position: absolute;
+			width: 240px;
+			top: 50px;
+			left: 350px;
+			border: 3px solid #333333;
+			border-radius: 5px;
+		}
+
+		#display {
+			padding: 10px;
+			background: #f2f2f2;
+		}
+
+		#login-name {
+			width: 150px;
+		}
+
+		#login-name:after {
+			content: '';
+			width: 10px;
+			height: 10px;
+			background: #0a7c45;
+			border-radius: 5px;
+			position: absolute;
+			margin-left: 10px;
+			margin-top: 3px;
+		}
+
+		#login-info {
+			height: 30px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		#call-status {
+			height: 100px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		#number-input {
+			display: flex;
+			justify-content: center;
+		}
+
+		#buttons {
+			margin-top: 10px;
+		}
+
+		#buttons>* {
+			margin-top: 10px;
+		}
+
+		#call-control .button {
+			width: 70px;
+		}
+
+		#login {
+			position: absolute;
+			top: 50px;
+			left: 606px;
+			background: #f2f2f2;
+			border: 3px solid #333333;
+			width: 300px;
+			border-radius: 5px;
+			padding: 10px;
+		}
+
+		#login input {
+			margin-bottom: 10px;
+			width: 282px;
+		}
+
+		#dial-numbers {
+			position: absolute;
+			top: 50px;
+			left: 100px;
+			background: #f2f2f2;
+			border-radius: 5px;
+			border: 3px solid #333333;
+			padding: 10px;
+		}
+
+		#call-status-error {
+			color: #ff5468;
+		}
+
+		#calls-list {
+			position: absolute;
+			top: 50px;
+			left: 606px;
+		}
+
+		.button {
+			padding: 5px 10px;
+			cursor: pointer;
+			background: #4c8bf7;
+			color: #ffffff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.button:hover {
+			background: #5886df;
+		}
+
+		.button:active {
+			background: #4077d6;
+		}
+
+		.button.disabled {
+			cursor: default;
+			background-color: #b2b2b2;
+		}
+
+		.num-row {
+			display: flex;
+			justify-content: center;
+		}
+
+		.num-row:not(:first-child) {
+			margin-top: 10px;
+		}
+
+		.num-value {
+			cursor: pointer;
+			display: flex;
+			width: 60px;
+			height: 50px;
+			background: #4c8bf7;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+			font-size: 20px;
+			color: white;
+			margin: 0 5px;
+		}
+
+		.num-value:hover {
+			background: #5886df;
+		}
+
+		.num-value:active {
+			background: #4077d6;
+		}
+
+		.call {
+			padding: 10px;
+			background: #f2f2f2;
+			border-radius: 5px;
+			border: 3px solid #333333;
+			width: 275px;
+			height: 100px;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-around;
+			margin-bottom: 10px;
+		}
+
+		.call .call-hold {
+			display: none;
+		}
+
+		.call.hold .call-hold {
+			display: inline;
+		}
+
+		.call-buttons {
+			display: flex;
+			justify-content: space-around;
+		}
+
+		.call-time {
+			display: none;
+		}
+	</style>
+
+	<script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript"
+		src="https://hackathon.demo.itoolabs.com/media/framework/javascript/formatdate.js"></script>
+	<script type="text/javascript"
+		src="https://hackathon.demo.itoolabs.com/media/framework/javascript/adapter.js"></script>
+	<script type="text/javascript"
+		src="https://hackathon.demo.itoolabs.com/media/framework/javascript/itl_webrtc.js"></script>
+	<!-- <script type="text/javascript"
+		src="view-source:https://hackathon.demo.itoolabs.com/media/framework/javascript/DetectRTC.min.js"></script> -->
+	<script src="//cdn.webrtc-experiment.com/DetectRTC.js"></script>
+</head>
+
+<body>
+	<div class="content">
+		<div id="phone">
+			<div id="display">
+				<div id="login-info">
+					<div id="login-name"></div>
+					<div id="login-btn" class="button">Log in</div>
+				</div>
+				<div id="call-status">
+					<div id="call-status-info"></div>
+					<div id="call-status-error"></div>
+				</div>
+				<div id="number-input">
+					<input type="number" placeholder="79261234567" name="number">
+				</div>
+				<div id="buttons">
+					<div id="call-btn" class="button">Start Call</div>
+				</div>
+			</div>
+		</div>
+		<div id="login">
+			<input type="text" id="login-input" name="websdk-login" placeholder="login">
+			<input type="password" id="password-input" name="websdk-password" placeholder="password">
+			<div id="auth" class="button">LOGIN</div>
+		</div>
+		<div id="dial-numbers">
+			<div class="num-row">
+				<div class="num-value">1</div>
+				<div class="num-value">2</div>
+				<div class="num-value">3</div>
+			</div>
+			<div class="num-row">
+				<div class="num-value">4</div>
+				<div class="num-value">5</div>
+				<div class="num-value">6</div>
+			</div>
+			<div class="num-row">
+				<div class="num-value">7</div>
+				<div class="num-value">8</div>
+				<div class="num-value">9</div>
+			</div>
+			<div class="num-row">
+				<div class="num-value">*</div>
+				<div class="num-value">0</div>
+				<div class="num-value">#</div>
+			</div>
+		</div>
+		<div id="calls-list"></div>
+	</div>
+	<script src="./main.js"></script>
+</body>
+
+</html>
